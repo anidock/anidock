@@ -1,23 +1,36 @@
-# AniDock — Internal Detail Pages (Vite + React + Tailwind + Jikan API)
+# AniDock + Supabase (Auth, Personal Library, Ratings, Community)
 
-This version routes clicks to **/anime/:id** (internal page) instead of MyAnimeList.
-Great for SEO, community features, and future streaming.
+A Vite + React + Tailwind app wired to **Supabase** to support:
+- Email/password **Auth**
+- **Personal Anime Library** with status, rating, progress, notes
+- **Community Posts** (feed) with likes
+- Internal detail pages (no external MAL links)
 
-## Quick Start
-```bash
+## 1) Setup Supabase
+1. Create a project at https://supabase.com/ (free tier works).
+2. In **SQL editor**, run `supabase.sql` from this repo.
+3. In **Authentication → Providers**, enable **Email**.
+4. Grab your **Project URL** and **anon public key**.
+
+## 2) Configure the app
+Copy `.env.example` to `.env` and set:
+```
+VITE_SUPABASE_URL=...
+VITE_SUPABASE_ANON_KEY=...
+```
+
+## 3) Run locally
+```
 npm install
 npm run dev
 ```
 
-## What changed vs previous build
-- Added **react-router-dom**
-- `AnimeCard` now links to `/anime/:id`
-- `main.jsx` defines routes for Home and Anime Detail
-- New `AnimeDetail.jsx` shows synopsis, trailer, genres, studios, etc.
+## 4) Deploy to Vercel
+- Import GitHub repo into Vercel
+- Add the same env vars in **Vercel → Settings → Environment Variables**
+- Build command `vite` (auto), Output `dist` (auto)
 
-## Deploy to Vercel
-- Framework preset: **Vite**
-- If you have a custom domain, add it in Vercel → Domains
-
-## API
-- Jikan v4 (public MyAnimeList mirror). You are **not** linking out to MAL anywhere.
+## Notes
+- Tracking data lives in `user_anime` table (per-user).
+- Community posts in `posts`; likes in `post_likes`.
+- Extend with comments, profile avatars, etc.
