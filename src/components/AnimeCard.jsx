@@ -1,10 +1,11 @@
+import { Link } from 'react-router-dom'
+
 export default function AnimeCard({ anime }) {
   const cover = anime?.images?.jpg?.image_url
   const title = anime?.title
-  const url = anime?.url
 
   return (
-    <a href={url} target="_blank" rel="noreferrer" className="card group">
+    <Link to={`/anime/${anime.mal_id}`} className="card group">
       <div className="aspect-[3/4] w-full overflow-hidden">
         <img
           src={cover}
@@ -19,6 +20,6 @@ export default function AnimeCard({ anime }) {
           ⭐ {anime.score ?? '—'} · {anime.type ?? '—'} · Ep {anime.episodes ?? '—'}
         </div>
       </div>
-    </a>
+    </Link>
   )
 }
