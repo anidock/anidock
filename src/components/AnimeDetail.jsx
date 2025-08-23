@@ -1,107 +1,68 @@
-import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
-import Navbar from './Navbar.jsx'
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function AnimeDetail() {
-  const { id } = useParams()
-  const [anime, setAnime] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const { idSlug } = useParams();
+  const id = idSlug.split("-")[0];
+  const [anime, setAnime] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
 
   useEffect(() => {
-    async function run() {
-      setLoading(true)
-      setError('')
-      try {
-        const res = await fetch(`https://api.jikan.moe/v4/anime/${id}/full`)
-        const json = await res.json()
-        setAnime(json?.data || null)
-      } catch (e) {
-        setError('Failed to load anime details.')
-      } finally {
-        setLoading(false)
-      }
+    fetch(`https://api.jikan.moe/v4/anime/${id}/full`)
+      .then(res => res.json())
+      .then(data => setAnime(data.data));
+  }, [id]);
+
+  const addToWatchlist = () => {
+    let wl = JSON.parse(localStorage.getItem("watchlist") || "[]");
+    if (!wl.includes(id)) {
+      wl.push(id);
+      localStorage.setItem("watchlist", JSON.stringify(wl));
+      alert("Added to watchlist!");
+    } else {
+      alert("Already in watchlist!");
     }
-    run()
-  }, [id])
+  };
 
-  if (loading) return (
-    <div className="min-h-screen">
-      <Navbar />
-      <div className="container-edge py-6">
-        <div className="animate-pulse h-64 rounded-2xl bg-zinc-800" />
-      </div>
-    </div>
-  )
+  const handleComment = (e) => {
+    e.preventDefault();
+    if (newComment.trim()) {
+      setComments([...comments, newComment]);
+      setNewComment("");
+    }
+  };
 
-  if (error || !anime) return (
-    <div className="min-h-screen">
-      <Navbar />
-      <div className="container-edge py-6">
-        <p className="text-red-400">{error || 'Anime not found.'}</p>
-        <Link to="/" className="inline-block mt-4 text-indigo-400 underline">← Back</Link>
-      </div>
-    </div>
-  )
-
-  const cover = anime?.images?.jpg?.large_image_url || anime?.images?.jpg?.image_url
-  const trailer = anime?.trailer?.embed_url
+  if (!anime) return <p className="p-4">Loading...</p>;
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      <div className="container-edge py-6 space-y-8">
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="md:col-span-1 card">
-            <img src={cover} alt={anime.title} className="w-full object-cover" />
-            <div className="p-4 text-sm text-zinc-300">
-              <div><span className="text-zinc-400">Type:</span> {anime.type ?? '—'}</div>
-              <div><span className="text-zinc-400">Episodes:</span> {anime.episodes ?? '—'}</div>
-              <div><span className="text-zinc-400">Score:</span> {anime.score ?? '—'}</div>
-              <div><span className="text-zinc-400">Status:</span> {anime.status ?? '—'}</div>
-              <div><span className="text-zinc-400">Year:</span> {anime.year ?? '—'}</div>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {(anime.genres || []).map(g => (
-                  <span key={g.mal_id} className="px-2 py-1 text-xs rounded-full bg-zinc-800 border border-zinc-700">{g.name}</span>
-                ))}
-              </div>
-            </div>
-          </div>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-2">{anime.title}</h1>
+      <img src={anime.images.jpg.large_image_url} alt={anime.title} className="rounded-xl mb-4" />
+      <p className="max-w-2xl text-zinc-300">{anime.synopsis}</p>
 
-          <div className="md:col-span-2 space-y-4">
-            <h1 className="text-2xl md:text-3xl font-extrabold">{anime.title}</h1>
-            <p className="text-zinc-300 whitespace-pre-line">{anime.synopsis || 'No synopsis available.'}</p>
+      <div className="mt-4 space-x-2">
+        <button onClick={addToWatchlist} className="bg-blue-600 px-4 py-2 rounded">Add to Watchlist</button>
+        <button className="bg-green-600 px-4 py-2 rounded">Watch Now (Coming Soon)</button>
+      </div>
 
-            {trailer && (
-              <div className="card">
-                <div className="aspect-video">
-                  <iframe
-                    src={trailer}
-                    title="Trailer"
-                    className="w-full h-full"
-                    allowFullScreen
-                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  />
-                </div>
-              </div>
-            )}
-
-            <div className="card p-4 text-sm text-zinc-300">
-              <h2 className="text-lg font-semibold mb-2">Details</h2>
-              <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2">
-                <div><span className="text-zinc-400">Duration:</span> {anime.duration || '—'}</div>
-                <div><span className="text-zinc-400">Rating:</span> {anime.rating || '—'}</div>
-                <div><span className="text-zinc-400">Studios:</span> {(anime.studios||[]).map(s=>s.name).join(', ') || '—'}</div>
-                <div><span className="text-zinc-400">Producers:</span> {(anime.producers||[]).map(p=>p.name).join(', ') || '—'}</div>
-                <div><span className="text-zinc-400">Source:</span> {anime.source || '—'}</div>
-                <div><span className="text-zinc-400">Season:</span> {anime.season || '—'}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Link to="/" className="inline-block text-indigo-400 underline">← Back to home</Link>
+      <div className="mt-6">
+        <h2 className="text-xl font-bold mb-2">Comments</h2>
+        <form onSubmit={handleComment} className="mb-2">
+          <input 
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Write a comment..."
+            className="px-2 py-1 text-black rounded mr-2"
+          />
+          <button type="submit" className="bg-zinc-700 px-2 py-1 rounded">Post</button>
+        </form>
+        <ul className="space-y-1">
+          {comments.map((c, i) => (
+            <li key={i} className="bg-zinc-800 p-2 rounded">{c}</li>
+          ))}
+        </ul>
       </div>
     </div>
-  )
+  );
 }

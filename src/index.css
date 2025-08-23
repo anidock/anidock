@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom utilities */
-.container-edge { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
-.card { @apply bg-zinc-900 rounded-2xl shadow-lg overflow-hidden transition-transform hover:-translate-y-1; }
+body {
+  @apply bg-zinc-900 text-white;
+}
