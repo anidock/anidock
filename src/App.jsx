@@ -1,17 +1,13 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import Home from "./components/Home.jsx";
-import About from "./components/About.jsx";
-import Contact from "./components/Contact.jsx";
+import Navbar from "./components/Navbar.jsx";
+import Hero from "./components/Hero.jsx";
+import AnimeGrid from "./components/AnimeGrid.jsx";
 
-function App() {
+export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<Contact />} />
-    </Routes>
+    <div className="bg-gray-900 text-white min-h-screen">
+      <Navbar />
+      <Hero />
+      <AnimeGrid />
+    </div>
   );
 }
-
-export default App;
