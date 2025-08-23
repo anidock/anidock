@@ -1,7 +1,12 @@
+import React from "react";
+import Navbar from "./components/Navbar";
+import FeaturedAnime from "./components/FeaturedAnime";
+
 function App() {
   return (
-    <div className="text-center mt-10">
-      <h1 className="text-3xl font-bold text-blue-500">Welcome to Anidock!</h1>
+    <div className="bg-gray-900 min-h-screen text-white">
+      <Navbar />
+      <FeaturedAnime />
     </div>
   );
 }
