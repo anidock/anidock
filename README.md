@@ -1,16 +1,21 @@
-## Hi there 👋
+# 🌊 AniDock
 
-<!--
-**anidock/anidock** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+### Your Dock for Everything Anime – Stream | Track | Connect  
 
-Here are some ideas to get you started:
+AniDock is a community-driven anime platform where fans can:  
+- 🎬 **Stream & Watch Anime** (legal sources & integrations)  
+- 📊 **Track Your Watchlist** (episodes, progress, favorites)  
+- 💬 **Join the Community** (reviews, discussions, recommendations)  
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+---
+
+## 🚀 Vision  
+AniDock isn’t just another anime site — it’s a **hub for fans**.  
+We want to build a space where anime lovers in **India and worldwide** can come together to watch, track, and talk about anime without limits.  
+
+---
+
+## 🛠️ Tech Stack (Planned)
+- **Frontend**: React + Tailwind CSS  
+- **Backend**: Node.js + Express  
+- **Database**: MongoDB /
