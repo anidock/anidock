@@ -1,13 +1,17 @@
-import Navbar from "./components/Navbar.jsx";
-import Hero from "./components/Hero.jsx";
-import AnimeGrid from "./components/AnimeGrid.jsx";
+import { Link } from "react-router-dom";
 
-export default function App() {
+function App() {
   return (
-    <div className="bg-gray-900 text-white min-h-screen">
-      <Navbar />
-      <Hero />
-      <AnimeGrid />
+    <div className="text-center mt-10">
+      <h1 className="text-3xl font-bold">Welcome to Anidock!</h1>
+      <Link
+        to="/anime"
+        className="mt-6 inline-block bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Go to Anime List
+      </Link>
     </div>
   );
 }
+
+export default App;
