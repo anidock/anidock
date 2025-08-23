@@ -19,3 +19,13 @@ We want to build a space where anime lovers in **India and worldwide** can come 
 - **Frontend**: React + Tailwind CSS  
 - **Backend**: Node.js + Express  
 - **Database**: MongoDB /
+- ---
+
+## 🌏 Join the Journey
+This is just the beginning. AniDock will grow step by step, and we’re excited to make it with the community’s support.  
+
+💡 **Contribute / Share Ideas / Be Part of AniDock!**
+
+---
+
+🔗 Stay tuned: More updates & roadmap coming soon!
