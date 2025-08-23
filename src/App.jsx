@@ -1,16 +1,16 @@
-import { Link } from "react-router-dom";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Home from "./components/Home.jsx";
+import About from "./components/About.jsx";
+import Contact from "./components/Contact.jsx";
 
 function App() {
   return (
-    <div className="text-center mt-10">
-      <h1 className="text-3xl font-bold">Welcome to Anidock!</h1>
-      <Link
-        to="/anime"
-        className="mt-6 inline-block bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        Go to Anime List
-      </Link>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/about" element={<About />} />
+      <Route path="/contact" element={<Contact />} />
+    </Routes>
   );
 }
 
