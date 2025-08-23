@@ -2,7 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  margin: 0;
-  font-family: 'Arial', sans-serif;
+/* Custom utilities */
+.container-edge {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.card {
+  @apply bg-zinc-900 rounded-2xl shadow-lg overflow-hidden transition-transform hover:-translate-y-1;
 }

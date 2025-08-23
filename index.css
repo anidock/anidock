@@ -1,7 +1,2 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-body {
-  font-family: sans-serif;
-}
+/* Root-level index.css (not used by Vite by default). Keeping for compatibility with your structure. */
+/* Styles are in src/index.css */

@@ -1,18 +1,11 @@
-import AnimeCard from "./AnimeCard.jsx";
+import AnimeCard from './AnimeCard.jsx'
 
-const animeList = [
-  { title: "Naruto", img: "https://via.placeholder.com/200x300?text=Naruto" },
-  { title: "One Piece", img: "https://via.placeholder.com/200x300?text=One+Piece" },
-  { title: "Attack on Titan", img: "https://via.placeholder.com/200x300?text=AoT" },
-  { title: "Demon Slayer", img: "https://via.placeholder.com/200x300?text=Demon+Slayer" },
-];
-
-export default function AnimeGrid() {
+export default function AnimeGrid({ items = [] }) {
   return (
-    <section className="p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-      {animeList.map((anime) => (
-        <AnimeCard key={anime.title} title={anime.title} img={anime.img} />
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      {items.map((item) => (
+        <AnimeCard key={item.mal_id} anime={item} />
       ))}
-    </section>
-  );
+    </div>
+  )
 }

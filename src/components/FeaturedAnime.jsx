@@ -1,24 +1,35 @@
-import React from "react";
-import AnimeCard from "./AnimeCard";
+import { useEffect, useState } from 'react'
+import AnimeGrid from './AnimeGrid.jsx'
 
-const featuredAnime = [
-  { title: "Attack on Titan", img: "https://i.imgur.com/xyz1.jpg" },
-  { title: "Naruto", img: "https://i.imgur.com/xyz2.jpg" },
-  { title: "Demon Slayer", img: "https://i.imgur.com/xyz3.jpg" },
-];
+export default function FeaturedAnime() {
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-function FeaturedAnime() {
+  useEffect(() => {
+    async function run() {
+      setLoading(true)
+      setError('')
+      try {
+        const res = await fetch('https://api.jikan.moe/v4/top/anime?limit=12')
+        const json = await res.json()
+        setData(json?.data || [])
+      } catch (e) {
+        setError('Failed to load featured anime.')
+      } finally {
+        setLoading(false)
+      }
+    }
+    run()
+  }, [])
+
+  if (loading) return <div className="animate-pulse h-48 rounded-2xl bg-zinc-800" />
+  if (error) return <p className="text-red-400">{error}</p>
+
   return (
-    <div className="p-6">
-      <h2 className="text-3xl font-bold mb-4">Featured Anime</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {featuredAnime.map((anime) => (
-          <AnimeCard key={anime.title} title={anime.title} img={anime.img} />
-        ))}
-      </div>
-    </div>
-  );
+    <section>
+      <h2 className="text-xl font-semibold mb-3">Trending Now</h2>
+      <AnimeGrid items={data} />
+    </section>
+  )
 }
-
-export default FeaturedAnime;
-

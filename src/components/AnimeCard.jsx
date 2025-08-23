@@ -1,10 +1,24 @@
-export default function AnimeCard({ title, img }) {
+export default function AnimeCard({ anime }) {
+  const cover = anime?.images?.jpg?.image_url
+  const title = anime?.title
+  const url = anime?.url
+
   return (
-    <div className="bg-gray-800 rounded overflow-hidden shadow-lg m-2 w-48">
-      <img src={img} alt={title} className="w-full h-64 object-cover" />
-      <div className="p-2">
-        <h3 className="font-bold text-lg">{title}</h3>
+    <a href={url} target="_blank" rel="noreferrer" className="card group">
+      <div className="aspect-[3/4] w-full overflow-hidden">
+        <img
+          src={cover}
+          alt={title}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          loading="lazy"
+        />
       </div>
-    </div>
-  );
+      <div className="p-3">
+        <h3 className="text-sm font-semibold line-clamp-2 min-h-[2.5rem]">{title}</h3>
+        <div className="mt-1 text-xs text-zinc-400">
+          ⭐ {anime.score ?? '—'} · {anime.type ?? '—'} · Ep {anime.episodes ?? '—'}
+        </div>
+      </div>
+    </a>
+  )
 }
