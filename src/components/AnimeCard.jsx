@@ -1,15 +1,10 @@
-import React from "react";
-
-function AnimeCard({ title, img }) {
+export default function AnimeCard({ title, img }) {
   return (
-    <div className="bg-gray-700 rounded-lg overflow-hidden hover:scale-105 transition-transform">
-      <img src={img} alt={title} className="w-full h-48 object-cover" />
-      <div className="p-4">
-        <h3 className="text-xl font-semibold">{title}</h3>
+    <div className="bg-gray-800 rounded overflow-hidden shadow-lg m-2 w-48">
+      <img src={img} alt={title} className="w-full h-64 object-cover" />
+      <div className="p-2">
+        <h3 className="font-bold text-lg">{title}</h3>
       </div>
     </div>
   );
 }
-
-export default AnimeCard;
-

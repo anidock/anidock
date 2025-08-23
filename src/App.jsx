@@ -1,14 +1,13 @@
-import React from "react";
-import Navbar from "./components/Navbar";
-import FeaturedAnime from "./components/FeaturedAnime";
+import Navbar from "./components/Navbar.jsx";
+import Hero from "./components/Hero.jsx";
+import AnimeGrid from "./components/AnimeGrid.jsx";
 
-function App() {
+export default function App() {
   return (
-    <div className="bg-gray-900 min-h-screen text-white">
+    <div className="bg-gray-900 text-white min-h-screen">
       <Navbar />
-      <FeaturedAnime />
+      <Hero />
+      <AnimeGrid />
     </div>
   );
 }
-
-export default App;
