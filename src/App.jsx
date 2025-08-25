@@ -6,8 +6,6 @@ import Anime from "./pages/Anime";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import About from "./pages/About";
-import Activity from "./pages/Activity";
-import AllReviews from "./pages/AllReviews";
 import { useAuth } from "./context/AuthContext";
 
 function Protected({ children }){
@@ -28,8 +26,6 @@ export default function App(){
         <Route path="/profile" element={<Protected><Profile /></Protected>} />
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/activity" element={<Activity />} />
-        <Route path="/reviews" element={<AllReviews />} />
         <Route path="*" element={<main className="container"><div className="panel">Not Found</div></main>} />
       </Routes>
       <footer><div className="container">© {new Date().getFullYear()} Anidock</div></footer>

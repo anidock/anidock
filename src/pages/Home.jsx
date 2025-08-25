@@ -22,11 +22,16 @@ function Section({ title, type }){
       {!loading && !err && (
         <table className="table">
           <thead>
-            <tr><th>Title</th><th>Format</th><th>Ep</th><th>Score</th><th>Year</th><th>Status</th></tr>
+            <tr><th></th><th>Title</th><th>Format</th><th>Ep</th><th>Score</th><th>Year</th><th>Status</th></tr>
           </thead>
           <tbody>
           {items.map(m => (
             <tr key={m.id}>
+              <td style={{width:80}}>
+                <Link to={`/anime/${m.id}`}>
+                  <img src={m.coverImage?.large || m.coverImage?.medium || m.bannerImage || "https://via.placeholder.com/80x110?text=No+Image"} alt="" style={{width:64,borderRadius:6}} />
+                </Link>
+              </td>
               <td><Link to={`/anime/${m.id}`}>{m.title.english || m.title.romaji}</Link></td>
               <td>{m.format}</td>
               <td>{m.episodes ?? "-"}</td>

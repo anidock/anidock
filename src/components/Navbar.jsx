@@ -9,7 +9,7 @@ export default function Navbar(){
 
   const onSearch = (e) => {
     e.preventDefault();
-    navigate(`/search?q=${encodeURIComponent(q)}`);
+    navigate(`/browse?q=${encodeURIComponent(q)}`);
   };
 
   return (
@@ -19,11 +19,9 @@ export default function Navbar(){
         <NavLink to="/browse">Browse</NavLink>
         <NavLink to="/profile">Profile</NavLink>
         <NavLink to="/about">About</NavLink>
-        <NavLink to="/activity">Activity</NavLink>
-        <NavLink to="/reviews">Reviews</NavLink>
 
         <form className="search" onSubmit={onSearch}>
-          <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="Search anime..." />
+          <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="Search anime (e.g. Naruto)" />
           <button className="btn" type="submit">Search</button>
         </form>
 
@@ -36,3 +34,4 @@ export default function Navbar(){
     </nav>
   );
 }
+

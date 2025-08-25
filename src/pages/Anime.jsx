@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getAnime } from "../lib/anilist";
 import { supabase } from "../lib/supabaseClient";
+import { useAuth } from "../context/AuthContext";
 import ReviewsList from "../components/ReviewsList";
 import ReviewForm from "../components/ReviewForm";
 import RatingsChart from "../components/RatingsChart";
-import { useAuth } from "../context/AuthContext";
 
 const statuses = ["PLANNING","WATCHING","COMPLETED","DROPPED"];
 
@@ -20,7 +20,9 @@ export default function Anime(){
   const { user } = useAuth();
 
   useEffect(()=>{
-    getAnime(id).then(setData).finally(()=>setLoading(false));
+    let mounted = true;
+    getAnime(id).then(d => { if(mounted) setData(d); }).catch(()=>{}).finally(()=>{ if(mounted) setLoading(false); });
+    return ()=> mounted = false;
   }, [id]);
 
   const save = async () => {
@@ -32,7 +34,6 @@ export default function Anime(){
       score: score ? Number(score) : null,
       progress: progress ? Number(progress) : null
     };
-    // upsert by unique (user_id, anime_id)
     const { error } = await supabase
       .from("user_anime_list")
       .upsert(row, { onConflict: "user_id,anime_id" });
@@ -42,19 +43,16 @@ export default function Anime(){
   if(loading) return <div className="container"><p>Loading…</p></div>;
   if(!data) return <div className="container"><p>Not found.</p></div>;
 
+  const poster = data.coverImage?.extraLarge || data.coverImage?.large || data.coverImage?.medium || data.bannerImage || "https://via.placeholder.com/400x560?text=No+Image";
+
   return (
     <div className="container">
-
-      <div className="panel">
-        <h3>Community Ratings</h3>
-        <RatingsChart animeIds={[Number(id)]} />
-      </div>
       <div className="panel hero">
-        {data.coverImage?.extraLarge && <img className="hero-poster" src={data.coverImage.extraLarge} alt="" />}
+        <img className="hero-poster" src={poster} alt="" />
         <div>
           <div className="hero-title">{data.title.english || data.title.romaji}</div>
-          <p style={{color:"#9aa3b2"}}>{data.genres?.join(" • ")} · {data.seasonYear} · {data.format} · {data.status}</p>
-          <p dangerouslySetInnerHTML={{__html: (data.description||"").replace(/\n/g," ")}}></p>
+          <p style={{color:"#9aa3b2"}}>{(data.genres||[]).join(" • ")} · {data.seasonYear} · {data.format} · {data.status}</p>
+          <p dangerouslySetInnerHTML={{__html: (data.description||"Description not available").replace(/\n/g," ")}}></p>
         </div>
       </div>
 
@@ -72,6 +70,17 @@ export default function Anime(){
           <button className="btn" onClick={save}>Save</button>
           {message && <span className="badge">{message}</span>}
         </div>
+      </div>
+
+      <div className="panel">
+        <h3>Community Ratings</h3>
+        <RatingsChart animeIds={[Number(id)]} />
+      </div>
+
+      <div className="panel">
+        <h3>Reviews</h3>
+        <ReviewForm animeId={id} onSaved={() => {}} />
+        <ReviewsList animeId={id} />
       </div>
     </div>
   );
