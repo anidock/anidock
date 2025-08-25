@@ -1,14 +1,21 @@
-import Navbar from "./components/Navbar";
-import AnimeList from "./components/AnimeList";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
 
-export default function App() {
+function App() {
   return (
-    <div>
-      <Navbar />
-      <main className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-4">Trending Anime</h1>
-        <AnimeList />
-      </main>
-    </div>
+    <Router>
+      <nav className="p-4 bg-gray-900 text-white flex gap-4">
+        <Link to="/">Home</Link>
+        <Link to="/login">Login</Link>
+      </nav>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </Router>
   );
 }
+
+export default App;
