@@ -1,32 +1,38 @@
-import { Link } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { supabase } from '../supabaseClient'
+import { NavLink, useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
 export default function Navbar(){
-  const [user, setUser] = useState(null)
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [q, setQ] = useState("");
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null))
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => setUser(session?.user ?? null))
-    return () => sub.subscription.unsubscribe()
-  }, [])
-
-  async function logout(){ await supabase.auth.signOut() }
+  const onSearch = (e) => {
+    e.preventDefault();
+    navigate(`/search?q=${encodeURIComponent(q)}`);
+  };
 
   return (
-    <div className="nav">
-      <Link to="/">AniDock</Link>
-      <Link to="/library">My Library</Link>
-      <Link to="/community">Community</Link>
-      <div className="spacer" />
-      {user ? (
-        <>
-          <span className="tag">{user.email}</span>
-          <button className="btn secondary" onClick={logout}>Logout</button>
-        </>
-      ) : (
-        <Link to="/login">Login / Sign up</Link>
-      )}
-    </div>
-  )
+    <nav>
+      <div className="nav-inner container">
+        <NavLink to="/" className="brand"><b>Ani</b>dock</NavLink>
+        <NavLink to="/browse">Browse</NavLink>
+        <NavLink to="/profile">Profile</NavLink>
+        <NavLink to="/about">About</NavLink>
+        <NavLink to="/activity">Activity</NavLink>
+        <NavLink to="/reviews">Reviews</NavLink>
+
+        <form className="search" onSubmit={onSearch}>
+          <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="Search anime..." />
+          <button className="btn" type="submit">Search</button>
+        </form>
+
+        {user ? (
+          <button className="btn secondary" onClick={logout} style={{marginLeft:8}}>Logout</button>
+        ) : (
+          <NavLink to="/login" className="btn" style={{marginLeft:8}}>Login</NavLink>
+        )}
+      </div>
+    </nav>
+  );
 }
