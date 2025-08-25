@@ -1,9 +1,6 @@
-// src/supabaseClient.js
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "https://vznlckpdapfzlpazerrd.supabase.co"
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey..."
+const supabaseUrl = "https://vznlckpdapfzlpazerrd.supabase.co"; 
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6bmxja3BkYXBmemxwYXplcnJkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5NTIwNjksImV4cCI6MjA3MTUyODA2OX0.fbsfj9xKZ2h1z-NOAsp1HJlnetBVhKGWx_jWaSe2Okk";
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-console.log("✅ Supabase initialized:", supabaseUrl)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
