@@ -1,48 +1,51 @@
 import { useEffect, useState } from 'react'
-import Navbar from '../components/Navbar'
-import { supabase } from '../lib/supabaseClient'
-import { useAuth } from '../lib/AuthContext'
-
+import { supabase } from '../supabaseClient'
+import { useNavigate } from 'react-router-dom'
 export default function Library(){
-  const { user } = useAuth()
-  const [items, setItems] = useState([])
-  const [filter, setFilter] = useState('all')
-
+  const [items,setItems]=useState([])
+  const [form,setForm]=useState({title:'',status:'planning',score:0,progress:0,notes:''})
+  const nav=useNavigate()
   useEffect(()=>{
-    async function load(){
-      const query = supabase.from('user_anime').select('*').eq('user_id', user.id)
-      const { data } = await query
-      setItems(data || [])
-    }
-    load()
-  }, [user])
-
-  const filtered = items.filter(i => filter==='all' ? true : i.status === filter)
-
-  return (
-    <div>
-      <Navbar />
-      <div className="container-edge py-6 space-y-4">
-        <h1 className="text-2xl font-bold">My Library</h1>
-        <div className="flex gap-2">
-          {['all','watching','completed','on-hold','dropped','plan-to-watch'].map(s=> (
-            <button key={s} onClick={()=>setFilter(s)} className="btn">{s}</button>
-          ))}
-        </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {filtered.map(i => (
-            <div key={i.mal_id} className="card">
-              <img src={i.cover_url} alt={i.title} className="w-full aspect-[3/4] object-cover" />
-              <div className="p-3 text-sm">
-                <div className="font-semibold line-clamp-2">{i.title}</div>
-                <div className="mt-1 text-zinc-400">Status: {i.status}</div>
-                <div className="mt-1 text-zinc-400">Score: {i.score ?? '—'}</div>
-                <div className="mt-1 text-zinc-400">Progress: {i.progress}</div>
-              </div>
+    supabase.auth.getSession().then(async({data})=>{ if(!data.session){ nav('/login'); return } await load() })
+    const { data: sub } = supabase.auth.onAuthStateChange((_e,session)=>{ if(!session) nav('/login') })
+    return ()=>sub.subscription.unsubscribe()
+  },[nav])
+  async function load(){ const {data,error}=await supabase.from('anime_library').select('*').order('created_at',{ascending:false}); if(error){ alert(error.message); return } setItems(data||[]) }
+  async function add(e){ e.preventDefault(); if(!form.title.trim()) return
+    const {error}=await supabase.from('anime_library').insert({title:form.title.trim(),status:form.status,score:Number(form.score)||0,progress:Number(form.progress)||0,notes:form.notes})
+    if(error){ alert(error.message); return } setForm({title:'',status:'planning',score:0,progress:0,notes:''}); await load()
+  }
+  async function del(id){ const {error}=await supabase.from('anime_library').delete().eq('id',id); if(error){ alert(error.message); return } setItems(items.filter(i=>i.id!==id)) }
+  return (<div className="container">
+    <div className="row">
+      <div className="card" style={{flex:'1 1 300px'}}>
+        <h2>Add to your anime library</h2>
+        <form onSubmit={add}>
+          <div style={{marginTop:8}}><label>Title</label><br/><input className="input" value={form.title} onChange={e=>setForm({...form,title:e.target.value})} placeholder="e.g. Haikyuu!!" /></div>
+          <div className="row" style={{marginTop:8}}>
+            <div style={{flex:1}}><label>Status</label><br/>
+              <select className="input" value={form.status} onChange={e=>setForm({...form,status:e.target.value})}>
+                <option value="planning">Planning</option><option value="watching">Watching</option><option value="completed">Completed</option><option value="on-hold">On hold</option><option value="dropped">Dropped</option>
+              </select>
             </div>
-          ))}
-        </div>
+            <div style={{flex:1}}><label>Score</label><br/><input className="input" type="number" min="0" max="10" value={form.score} onChange={e=>setForm({...form,score:e.target.value})} /></div>
+            <div style={{flex:1}}><label>Progress (eps)</label><br/><input className="input" type="number" min="0" value={form.progress} onChange={e=>setForm({...form,progress:e.target.value})} /></div>
+          </div>
+          <div style={{marginTop:8}}><label>Notes</label><br/><textarea className="input" rows="3" value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})} /></div>
+          <div style={{marginTop:12}}><button className="btn">Add</button></div>
+        </form>
+      </div>
+      <div className="card" style={{flex:'2 1 500px'}}>
+        <h2>Your Library</h2>
+        {items.length===0? <p>No entries yet. Add your first anime!</p> :
+          <div style={{marginTop:8}}>{items.map(i=> (
+            <div key={i.id} className="row" style={{alignItems:'center',justifyContent:'space-between',borderBottom:'1px solid #1e2437',padding:'10px 0'}}>
+              <div><strong>{i.title}</strong><div className="mono">Status: {i.status} • Score: {i.score} • Progress: {i.progress}</div>{i.notes&&<div style={{marginTop:4}}>{i.notes}</div>}</div>
+              <button className="btn secondary" onClick={()=>del(i.id)}>Delete</button>
+            </div>
+          ))}</div>
+        }
       </div>
     </div>
-  )
+  </div>)
 }

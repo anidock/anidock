@@ -1,54 +1,23 @@
 import { useEffect, useState } from 'react'
-import Navbar from '../components/Navbar'
-import { supabase } from '../lib/supabaseClient'
-import { useAuth } from '../lib/AuthContext'
-
+import { supabase } from '../supabaseClient'
+import { useNavigate } from 'react-router-dom'
 export default function Community(){
-  const [content, setContent] = useState('')
-  const [posts, setPosts] = useState([])
-  const { user } = useAuth()
-
-  async function load(){
-    const { data } = await supabase.from('posts').select('id, content, created_at, user_id')
-      .order('created_at', { ascending: false })
-    setPosts(data || [])
-  }
-  useEffect(()=>{ load() }, [])
-
-  async function createPost(e){
-    e.preventDefault()
-    if(!content.trim()) return
-    const { error } = await supabase.from('posts').insert({ content, user_id: user.id })
-    if(error) return alert(error.message)
-    setContent('')
-    load()
-  }
-
-  async function likePost(id){
-    await supabase.from('post_likes').insert({ post_id: id, user_id: user.id }).catch(()=>{})
-  }
-
-  return (
-    <div>
-      <Navbar />
-      <div className="container-edge py-6 space-y-6">
-        <form onSubmit={createPost} className="card p-4 space-y-2">
-          <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="Share a thought..." className="input h-24" />
-          <button className="btn w-fit">Post</button>
-        </form>
-
-        <div className="space-y-4">
-          {posts.map(p => (
-            <article key={p.id} className="card p-4">
-              <div className="text-xs text-zinc-400">{new Date(p.created_at).toLocaleString()}</div>
-              <p className="mt-2">{p.content}</p>
-              <div className="mt-3 flex gap-3 text-sm">
-                <button onClick={()=>likePost(p.id)} className="hover:underline">👍 Like</button>
-              </div>
-            </article>
-          ))}
-        </div>
+  const [posts,setPosts]=useState([]); const [content,setContent]=useState(''); const nav=useNavigate()
+  useEffect(()=>{
+    supabase.auth.getSession().then(async({data})=>{ if(!data.session){ nav('/login'); return } await load() })
+    const { data: sub } = supabase.auth.onAuthStateChange((_e,session)=>{ if(!session) nav('/login') })
+    return ()=>sub.subscription.unsubscribe()
+  },[nav])
+  async function load(){ const {data,error}=await supabase.from('posts').select('id,content,created_at,user_id').order('created_at',{ascending:false}); if(error){ alert(error.message); return } setPosts(data||[]) }
+  async function add(e){ e.preventDefault(); if(!content.trim()) return; const {error}=await supabase.from('posts').insert({content}); if(error){ alert(error.message); return } setContent(''); await load() }
+  return (<div className="container"><div className="card" style={{maxWidth:700,margin:'0 auto'}}>
+    <h2>Community Feed</h2>
+    <form onSubmit={add} style={{marginTop:8}}><textarea className="input" rows="3" placeholder="Share something anime..." value={content} onChange={e=>setContent(e.target.value)} /><div style={{marginTop:8}}><button className="btn">Post</button></div></form>
+    <div style={{marginTop:16}}>{posts.length===0? <p>No posts yet. Be the first!</p> : posts.map(p=>(
+      <div key={p.id} style={{borderTop:'1px solid #1e2437',padding:'12px 0'}}>
+        <div className="mono">{new Date(p.created_at).toLocaleString()}</div>
+        <div style={{marginTop:4}}>{p.content}</div>
       </div>
-    </div>
-  )
+    ))}</div>
+  </div></div>)
 }
